@@ -1,0 +1,1177 @@
+components:
+  schemas:
+    Acl:
+      properties:
+        owners:
+          items:
+            type: string
+          type: array
+        viewers:
+          items:
+            type: string
+          type: array
+      title: Acl
+      type: object
+    Ancestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+      title: Ancestry
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      title: ConnectedOuterService
+      type: object
+    CopyDmsRequest:
+      properties:
+        datasetSources:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+      title: CopyDmsRequest
+      type: object
+    CopyDmsResponse:
+      properties:
+        datasetBlobStoragePath:
+          type: string
+        success:
+          type: boolean
+      title: CopyDmsResponse
+      type: object
+    DatasetProperties:
+      properties:
+        FileSourceInfo:
+          $ref: '#/components/schemas/FileSourceInfo'
+      required:
+      - FileSourceInfo
+      title: DatasetProperties
+      type: object
+    DatasetRetrievalProperties:
+      properties:
+        datasetRegistryId:
+          type: string
+        retrievalProperties:
+          type: object
+      title: DatasetRetrievalProperties
+      type: object
+    DownloadUrlResponse:
+      properties:
+        SignedUrl:
+          type: string
+      title: DownloadUrlResponse
+      type: object
+    FileData:
+      properties:
+        Checksum:
+          type: string
+        DatasetProperties:
+          $ref: '#/components/schemas/DatasetProperties'
+        Description:
+          type: string
+        EncodingFormatTypeID:
+          type: string
+        Endian:
+          enum:
+          - BIG
+          - LITTLE
+          type: string
+        ExistenceKind:
+          type: string
+        ExtensionProperties:
+          type: object
+        Name:
+          type: string
+        ResourceCurationStatus:
+          type: string
+        ResourceHomeRegionID:
+          type: string
+        ResourceHostRegionIDs:
+          items:
+            type: string
+          type: array
+        ResourceLifecycleStatus:
+          type: string
+        ResourceSecurityClassification:
+          type: string
+        SchemaFormatTypeID:
+          type: string
+        Source:
+          type: string
+        TotalSize:
+          type: string
+      required:
+      - DatasetProperties
+      title: FileData
+      type: object
+    FileListRequest:
+      properties:
+        Items:
+          format: int32
+          type: integer
+        PageNum:
+          format: int32
+          type: integer
+        TimeFrom:
+          format: date-time
+          type: string
+        TimeTo:
+          format: date-time
+          type: string
+        UserID:
+          type: string
+      title: FileListRequest
+      type: object
+    FileListResponse:
+      properties:
+        Content:
+          items:
+            $ref: '#/components/schemas/FileLocation'
+          type: array
+        Number:
+          format: int32
+          type: integer
+        NumberOfElements:
+          format: int32
+          type: integer
+        Size:
+          format: int32
+          type: integer
+      title: FileListResponse
+      type: object
+    FileLocation:
+      properties:
+        CreatedAt:
+          example: yyyy-MM-dd'T'HH:mm:ss.SSSZ
+          type: string
+        CreatedBy:
+          type: string
+        Driver:
+          enum:
+          - GCS
+          type: string
+        FileID:
+          type: string
+        Location:
+          type: string
+      title: FileLocation
+      type: object
+    FileLocationRequest:
+      properties:
+        FileID:
+          type: string
+      title: FileLocationRequest
+      type: object
+    FileLocationResponse:
+      properties:
+        Driver:
+          type: object
+        Location:
+          type: string
+      title: FileLocationResponse
+      type: object
+    FileMetadata:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/Ancestry'
+        data:
+          $ref: '#/components/schemas/FileData'
+        id:
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+      required:
+      - acl
+      - data
+      - kind
+      - legal
+      title: FileMetadata
+      type: object
+    FileMetadataResponse:
+      properties:
+        id:
+          type: string
+      title: FileMetadataResponse
+      type: object
+    FileRequest:
+      properties:
+        FileID:
+          type: string
+      title: FileRequest
+      type: object
+    FileResponse:
+      title: FileResponse
+      type: object
+    FileSourceInfo:
+      properties:
+        Checksum:
+          type: string
+        ChecksumAlgorithm:
+          type: string
+        EncodingFormatTypeID:
+          type: string
+        FileSize:
+          type: string
+        FileSource:
+          type: string
+        Name:
+          type: string
+        PreLoadFilePath:
+          type: string
+        PreloadFileCreateDate:
+          type: string
+        PreloadFileCreateUser:
+          type: string
+        PreloadFileModifyDate:
+          type: string
+        PreloadFileModifyUser:
+          type: string
+      title: FileSourceInfo
+      type: object
+    Legal:
+      properties:
+        legaltags:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        otherRelevantDataCountries:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        status:
+          enum:
+          - compliant
+          - incompliant
+          type: string
+      title: Legal
+      type: object
+    LocationRequest:
+      properties:
+        FileID:
+          type: string
+      title: LocationRequest
+      type: object
+    LocationResponse:
+      properties:
+        FileID:
+          type: string
+        Location:
+          additionalProperties:
+            type: string
+          type: object
+      title: LocationResponse
+      type: object
+    Record:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        data:
+          type: object
+        id:
+          description: 'Unique identifier in whole Data Ecosystem. When not provided,
+            Data Ecosystem will create and assign an id to the record. Must follow
+            the naming convention: {Data-Partition-Id}:{object-type}:{uuid}.'
+          example: common:work-product-component--wellLog:123456
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        kind:
+          description: Record kind for which the schema information is applied to.
+          example: common:wks:work-product-component--wellLog:1.0.0
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - id
+      - kind
+      title: Record
+      type: object
+    RecordAncestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      title: RecordAncestry
+      type: object
+    RecordVersion:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/Ancestry'
+        data:
+          $ref: '#/components/schemas/FileData'
+        id:
+          type: string
+        kind:
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - data
+      - kind
+      - legal
+      title: RecordVersion
+      type: object
+    RetrievalInstructionsRequest:
+      properties:
+        datasetRegistryIds:
+          items:
+            type: string
+          type: array
+      title: RetrievalInstructionsRequest
+      type: object
+    RetrievalInstructionsResponse:
+      properties:
+        datasets:
+          items:
+            $ref: '#/components/schemas/DatasetRetrievalProperties'
+          type: array
+        providerKey:
+          type: string
+      title: RetrievalInstructionsResponse
+      type: object
+    SrnFileData:
+      properties:
+        connectionString:
+          type: string
+        kind:
+          type: string
+        signedUrl:
+          type: string
+        unsignedUrl:
+          type: string
+      title: SrnFileData
+      type: object
+    StorageInstructionsResponse:
+      properties:
+        providerKey:
+          type: string
+        storageLocation:
+          type: object
+      title: StorageInstructionsResponse
+      type: object
+    UrlSigningRequest:
+      properties:
+        srns:
+          items:
+            type: string
+          type: array
+      title: UrlSigningRequest
+      type: object
+    UrlSigningResponse:
+      properties:
+        processed:
+          additionalProperties:
+            $ref: '#/components/schemas/SrnFileData'
+          type: object
+        unprocessed:
+          items:
+            type: string
+          type: array
+      title: UrlSigningResponse
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      title: VersionInfo
+      type: object
+  securitySchemes:
+    Authorization:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+openapi: 3.0.3
+paths:
+  /api/file/v2/delivery/GetFileSignedUrl:
+    post:
+      operationId: getFileSignedURLUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrlSigningRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrlSigningResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getFileSignedURL
+      tags:
+      - delivery-api
+  /api/file/v2/file-collections/copy:
+    post:
+      operationId: copyDmsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyDmsRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/CopyDmsResponse'
+                type: array
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: copyDms
+      tags:
+      - file-collection-dms-api
+  /api/file/v2/file-collections/retrievalInstructions:
+    post:
+      operationId: getRetrievalInstructionsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrievalInstructionsRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RetrievalInstructionsResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRetrievalInstructions
+      tags:
+      - file-collection-dms-api
+  /api/file/v2/file-collections/storageInstructions:
+    post:
+      operationId: getStorageInstructionsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StorageInstructionsResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getStorageInstructions
+      tags:
+      - file-collection-dms-api
+  /api/file/v2/files/copy:
+    post:
+      operationId: copyDmsUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CopyDmsRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/CopyDmsResponse'
+                type: array
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: copyDms
+      tags:
+      - file-dms-api
+  /api/file/v2/files/metadata:
+    post:
+      operationId: postFilesMetadataUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileMetadata'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileMetadataResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: postFilesMetadata
+      tags:
+      - file-metadata-api
+  /api/file/v2/files/retrievalInstructions:
+    post:
+      operationId: getRetrievalInstructionsUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrievalInstructionsRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RetrievalInstructionsResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRetrievalInstructions
+      tags:
+      - file-dms-api
+  /api/file/v2/files/storageInstructions:
+    post:
+      operationId: getStorageInstructionsUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StorageInstructionsResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getStorageInstructions
+      tags:
+      - file-dms-api
+  /api/file/v2/files/uploadURL:
+    get:
+      operationId: getLocationFileUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getLocationFile
+      tags:
+      - file-location-api
+  /api/file/v2/files/{id}/downloadURL:
+    get:
+      operationId: downloadURLUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: expiryTime
+        in: query
+        name: expiryTime
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/DownloadUrlResponse'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: downloadURL
+      tags:
+      - file-delivery-api
+  /api/file/v2/files/{id}/metadata:
+    delete:
+      operationId: deleteFileMetadataByIdUsingDELETE
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: deleteFileMetadataById
+      tags:
+      - file-metadata-api
+    get:
+      operationId: getFileMetadataByIdUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordVersion'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getFileMetadataById
+      tags:
+      - file-metadata-api
+  /api/file/v2/getFile:
+    post:
+      operationId: getFileUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getFile
+      tags:
+      - file-api
+  /api/file/v2/getFileList:
+    post:
+      operationId: getFileListUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileListRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getFileList
+      tags:
+      - file-list-api
+  /api/file/v2/getFileLocation:
+    post:
+      operationId: getFileLocationUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileLocationRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/FileLocationResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getFileLocation
+      tags:
+      - file-location-api
+  /api/file/v2/getLocation:
+    post:
+      operationId: getLocationUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getLocation
+      tags:
+      - file-location-api
+  /api/file/v2/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/file/v2/liveness_check:
+    get:
+      operationId: livenessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: livenessCheck
+      tags:
+      - health-check-api
+  /api/file/v2/readiness_check:
+    get:
+      operationId: readinessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: readinessCheck
+      tags:
+      - health-check-api
+servers:
+- description: Inferred Url
+  url: https://uptesting0.oep.ppe.azure-int.net
+tags:
+- description: Delivery Api
+  name: delivery-api
+- description: File Api
+  name: file-api
+- description: File Collection Dms Api
+  name: file-collection-dms-api
+- description: File Delivery Api
+  name: file-delivery-api
+- description: File Dms Api
+  name: file-dms-api
+- description: File List Api
+  name: file-list-api
+- description: File Location Api
+  name: file-location-api
+- description: File Metadata Api
+  name: file-metadata-api
+- description: Health Check Api
+  name: health-check-api
+- description: Info Api
+  name: info-api
