@@ -1,0 +1,1137 @@
+components:
+  schemas:
+    Acl:
+      properties:
+        owners:
+          items:
+            type: string
+          type: array
+        viewers:
+          items:
+            type: string
+          type: array
+      title: Acl
+      type: object
+    BulkUpdateRecordsResponse:
+      properties:
+        lockedRecordIds:
+          items:
+            type: string
+          type: array
+        notFoundRecordIds:
+          items:
+            type: string
+          type: array
+        recordCount:
+          format: int32
+          type: integer
+        recordIds:
+          items:
+            type: string
+          type: array
+        unAuthorizedRecordIds:
+          items:
+            type: string
+          type: array
+      title: BulkUpdateRecordsResponse
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      title: ConnectedOuterService
+      type: object
+    ConversionStatus:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+        id:
+          type: string
+        status:
+          type: string
+      title: ConversionStatus
+      type: object
+    CreateUpdateRecordsResponse:
+      properties:
+        recordCount:
+          format: int32
+          type: integer
+        recordIdVersions:
+          items:
+            type: string
+          type: array
+        recordIds:
+          items:
+            type: string
+          type: array
+        skippedRecordIds:
+          items:
+            type: string
+          type: array
+      title: CreateUpdateRecordsResponse
+      type: object
+    DatastoreQueryResult:
+      properties:
+        cursor:
+          type: string
+        results:
+          items:
+            type: string
+          type: array
+      title: DatastoreQueryResult
+      type: object
+    Legal:
+      properties:
+        legaltags:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        otherRelevantDataCountries:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        status:
+          enum:
+          - compliant
+          - incompliant
+          type: string
+      title: Legal
+      type: object
+    MultiRecordIds:
+      properties:
+        attributes:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            type: string
+          type: array
+      title: MultiRecordIds
+      type: object
+    MultiRecordInfo:
+      properties:
+        invalidRecords:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+        retryRecords:
+          items:
+            type: string
+          type: array
+      title: MultiRecordInfo
+      type: object
+    MultiRecordRequest:
+      properties:
+        records:
+          items:
+            type: string
+          type: array
+      title: MultiRecordRequest
+      type: object
+    MultiRecordResponse:
+      properties:
+        conversionStatuses:
+          items:
+            $ref: '#/components/schemas/ConversionStatus'
+          type: array
+        notFound:
+          items:
+            type: string
+          type: array
+        records:
+          items:
+            type: string
+          type: array
+      title: MultiRecordResponse
+      type: object
+    PatchOperation:
+      properties:
+        op:
+          description: Bulk update record operation.
+          example: replace
+          type: string
+        path:
+          description: Bulk update record path.
+          example: /acl/owners
+          type: string
+        value:
+          description: Bulk update record path.
+          items:
+            type: string
+          type: array
+      required:
+      - op
+      - path
+      - value
+      title: PatchOperation
+      type: object
+    Record:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        data:
+          type: object
+        id:
+          description: 'Unique identifier in whole Data Ecosystem. When not provided,
+            Data Ecosystem will create and assign an id to the record. Must follow
+            the naming convention: {Data-Partition-Id}:{object-type}:{uuid}.'
+          example: common:work-product-component--wellLog:123456
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        kind:
+          description: Record kind for which the schema information is applied to.
+          example: common:wks:work-product-component--wellLog:1.0.0
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - id
+      - kind
+      title: Record
+      type: object
+    RecordAncestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      title: RecordAncestry
+      type: object
+    RecordBulkUpdateParam:
+      properties:
+        ops:
+          description: Record metadata operations.
+          items:
+            $ref: '#/components/schemas/PatchOperation'
+          type: array
+        query:
+          $ref: '#/components/schemas/RecordQuery'
+          description: Record query condition.
+      required:
+      - ops
+      - query
+      title: RecordBulkUpdateParam
+      type: object
+    RecordQuery:
+      properties:
+        ids:
+          description: List of record ids. Each record id must follow the naming convention
+            {Data-Partition-Id}:{dataset-name}:{record-type}:{version}.
+          example: common:work-product-component--wellLog:123456
+          items:
+            type: string
+          type: array
+      required:
+      - ids
+      title: RecordQuery
+      type: object
+    RecordVersions:
+      properties:
+        recordId:
+          type: string
+        versions:
+          items:
+            format: int64
+            type: integer
+          type: array
+      title: RecordVersions
+      type: object
+    ResponseEntity:
+      properties:
+        body:
+          type: object
+        statusCode:
+          enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+          type: string
+        statusCodeValue:
+          format: int32
+          type: integer
+      title: ResponseEntity
+      type: object
+    Schema:
+      properties:
+        ext:
+          type: object
+        kind:
+          description: Record kind for which the schema information is applied to.
+          example: common:wks:work-product-component--wellLog:1.0.0
+          type: string
+        schema:
+          items:
+            $ref: '#/components/schemas/SchemaItem'
+          type: array
+      required:
+      - kind
+      title: Schema
+      type: object
+    SchemaItem:
+      properties:
+        ext:
+          type: object
+        kind:
+          type: string
+        path:
+          type: string
+        properties:
+          items:
+            $ref: '#/components/schemas/SchemaItem'
+          type: array
+      title: SchemaItem
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      title: VersionInfo
+      type: object
+  securitySchemes:
+    Authorization:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+openapi: 3.0.3
+paths:
+  /api/storage/v2/health:
+    get:
+      operationId: healthMessageUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: string
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: healthMessage
+      tags:
+      - health-check-api
+  /api/storage/v2/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/storage/v2/push-handlers/legaltag-changed:
+    post:
+      operationId: legaltagChangedUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: legaltagChanged
+      tags:
+      - pubsub-endpoints
+  /api/storage/v2/query/kinds:
+    get:
+      operationId: getKindsUsingGET
+      parameters:
+      - description: cursor
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: limit
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreQueryResult'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getKinds
+      tags:
+      - query-api
+  /api/storage/v2/query/records:
+    get:
+      operationId: getAllRecordsUsingGET
+      parameters:
+      - description: cursor
+        in: query
+        name: cursor
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: limit
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: kind
+        in: query
+        name: kind
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatastoreQueryResult'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getAllRecords
+      tags:
+      - query-api
+    post:
+      operationId: getRecordsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordIds'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordInfo'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRecords
+      tags:
+      - query-api
+  /api/storage/v2/query/records:batch:
+    post:
+      operationId: fetchRecordsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MultiRecordRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultiRecordResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: fetchRecords
+      tags:
+      - query-api
+  /api/storage/v2/records:
+    patch:
+      operationId: updateRecordsMetadataUsingPATCH
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordBulkUpdateParam'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpdateRecordsResponse'
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: updateRecordsMetadata
+      tags:
+      - patch-api
+    put:
+      operationId: createOrUpdateRecordsUsingPUT
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: skipdupes
+        in: query
+        name: skipdupes
+        required: false
+        schema:
+          type: boolean
+        style: form
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                $ref: '#/components/schemas/Record'
+              type: array
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUpdateRecordsResponse'
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: createOrUpdateRecords
+      tags:
+      - record-api
+  /api/storage/v2/records/delete:
+    post:
+      operationId: bulkDeleteRecordsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: string
+              type: array
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: bulkDeleteRecords
+      tags:
+      - record-api
+  /api/storage/v2/records/versions/{id}:
+    get:
+      operationId: getRecordVersionsUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordVersions'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRecordVersions
+      tags:
+      - record-api
+  /api/storage/v2/records/{id}:
+    delete:
+      operationId: purgeRecordUsingDELETE
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        style: simple
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: purgeRecord
+      tags:
+      - record-api
+    get:
+      operationId: getLatestRecordVersionUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        style: simple
+      - description: attribute
+        explode: true
+        in: query
+        name: attribute
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getLatestRecordVersion
+      tags:
+      - record-api
+  /api/storage/v2/records/{id}/{version}:
+    get:
+      operationId: getSpecificRecordVersionUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        style: simple
+      - description: version
+        in: path
+        name: version
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      - description: attribute
+        explode: true
+        in: query
+        name: attribute
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getSpecificRecordVersion
+      tags:
+      - record-api
+  /api/storage/v2/records/{id}:delete:
+    post:
+      operationId: deleteRecordUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        style: simple
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: deleteRecord
+      tags:
+      - record-api
+  /api/storage/v2/schemas:
+    post:
+      deprecated: true
+      operationId: createSchemaUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: createSchema
+      tags:
+      - schema-api
+  /api/storage/v2/schemas/{kind}:
+    delete:
+      deprecated: true
+      operationId: deleteSchemaUsingDELETE
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: kind
+        in: path
+        name: kind
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: deleteSchema
+      tags:
+      - schema-api
+    get:
+      deprecated: true
+      operationId: getSchemaUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: kind
+        in: path
+        name: kind
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getSchema
+      tags:
+      - schema-api
+servers:
+- description: Inferred Url
+  url: https://uptesting0.oep.ppe.azure-int.net
+tags:
+- description: Health Check Api
+  name: health-check-api
+- description: Info Api
+  name: info-api
+- description: Patch Api
+  name: patch-api
+- description: Pubsub Endpoints
+  name: pubsub-endpoints
+- description: Query Api
+  name: query-api
+- description: Record Api
+  name: record-api
+- description: Schema Api
+  name: schema-api
