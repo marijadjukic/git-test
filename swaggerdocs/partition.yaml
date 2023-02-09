@@ -1,0 +1,323 @@
+components:
+  schemas:
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      title: ConnectedOuterService
+      type: object
+    PartitionInfo:
+      properties:
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/Property'
+          type: object
+      title: PartitionInfo
+      type: object
+    Property:
+      properties:
+        sensitive:
+          type: boolean
+        value:
+          type: object
+      title: Property
+      type: object
+    ResponseEntity:
+      properties:
+        body:
+          type: object
+        statusCode:
+          enum:
+          - ACCEPTED
+          - ALREADY_REPORTED
+          - BAD_GATEWAY
+          - BAD_REQUEST
+          - BANDWIDTH_LIMIT_EXCEEDED
+          - CHECKPOINT
+          - CONFLICT
+          - CONTINUE
+          - CREATED
+          - DESTINATION_LOCKED
+          - EXPECTATION_FAILED
+          - FAILED_DEPENDENCY
+          - FORBIDDEN
+          - FOUND
+          - GATEWAY_TIMEOUT
+          - GONE
+          - HTTP_VERSION_NOT_SUPPORTED
+          - IM_USED
+          - INSUFFICIENT_SPACE_ON_RESOURCE
+          - INSUFFICIENT_STORAGE
+          - INTERNAL_SERVER_ERROR
+          - I_AM_A_TEAPOT
+          - LENGTH_REQUIRED
+          - LOCKED
+          - LOOP_DETECTED
+          - METHOD_FAILURE
+          - METHOD_NOT_ALLOWED
+          - MOVED_PERMANENTLY
+          - MOVED_TEMPORARILY
+          - MULTIPLE_CHOICES
+          - MULTI_STATUS
+          - NETWORK_AUTHENTICATION_REQUIRED
+          - NON_AUTHORITATIVE_INFORMATION
+          - NOT_ACCEPTABLE
+          - NOT_EXTENDED
+          - NOT_FOUND
+          - NOT_IMPLEMENTED
+          - NOT_MODIFIED
+          - NO_CONTENT
+          - OK
+          - PARTIAL_CONTENT
+          - PAYLOAD_TOO_LARGE
+          - PAYMENT_REQUIRED
+          - PERMANENT_REDIRECT
+          - PRECONDITION_FAILED
+          - PRECONDITION_REQUIRED
+          - PROCESSING
+          - PROXY_AUTHENTICATION_REQUIRED
+          - REQUESTED_RANGE_NOT_SATISFIABLE
+          - REQUEST_ENTITY_TOO_LARGE
+          - REQUEST_HEADER_FIELDS_TOO_LARGE
+          - REQUEST_TIMEOUT
+          - REQUEST_URI_TOO_LONG
+          - RESET_CONTENT
+          - SEE_OTHER
+          - SERVICE_UNAVAILABLE
+          - SWITCHING_PROTOCOLS
+          - TEMPORARY_REDIRECT
+          - TOO_EARLY
+          - TOO_MANY_REQUESTS
+          - UNAUTHORIZED
+          - UNAVAILABLE_FOR_LEGAL_REASONS
+          - UNPROCESSABLE_ENTITY
+          - UNSUPPORTED_MEDIA_TYPE
+          - UPGRADE_REQUIRED
+          - URI_TOO_LONG
+          - USE_PROXY
+          - VARIANT_ALSO_NEGOTIATES
+          type: string
+        statusCodeValue:
+          format: int32
+          type: integer
+      title: ResponseEntity
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      title: VersionInfo
+      type: object
+  securitySchemes:
+    Authorization:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+openapi: 3.0.3
+paths:
+  /api/partition/v1/info:
+    get:
+      operationId: infoUsingGET
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/partition/v1/partitions:
+    get:
+      operationId: listUsingGET
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                items:
+                  type: string
+                type: array
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: list
+      tags:
+      - partition-api
+  /api/partition/v1/partitions/{partitionId}:
+    delete:
+      operationId: deleteUsingDELETE
+      parameters:
+      - description: partitionId
+        in: path
+        name: partitionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: delete
+      tags:
+      - partition-api
+    get:
+      operationId: getUsingGET
+      parameters:
+      - description: partitionId
+        in: path
+        name: partitionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  $ref: '#/components/schemas/Property'
+                type: object
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: get
+      tags:
+      - partition-api
+    patch:
+      operationId: patchUsingPATCH
+      parameters:
+      - description: partitionId
+        in: path
+        name: partitionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionInfo'
+      responses:
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: patch
+      tags:
+      - partition-api
+    post:
+      operationId: createUsingPOST
+      parameters:
+      - description: partitionId
+        in: path
+        name: partitionId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionInfo'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: create
+      tags:
+      - partition-api
+servers:
+- description: Inferred Url
+  url: https://uptesting0.oep.ppe.azure-int.net
+tags:
+- description: Info Api
+  name: info-api
+- description: Partition Api
+  name: partition-api
