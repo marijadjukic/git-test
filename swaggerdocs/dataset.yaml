@@ -1,0 +1,542 @@
+components:
+  schemas:
+    Acl:
+      properties:
+        owners:
+          items:
+            type: string
+          type: array
+        viewers:
+          items:
+            type: string
+          type: array
+      title: Acl
+      type: object
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      title: ConnectedOuterService
+      type: object
+    CreateDatasetRegistryRequest:
+      properties:
+        datasetRegistries:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+      title: CreateDatasetRegistryRequest
+      type: object
+    GetCreateUpdateDatasetRegistryResponse:
+      properties:
+        datasetRegistries:
+          items:
+            $ref: '#/components/schemas/Record'
+          type: array
+      title: GetCreateUpdateDatasetRegistryResponse
+      type: object
+    GetDatasetRegistryRequest:
+      properties:
+        datasetRegistryIds:
+          items:
+            type: string
+          type: array
+      title: GetDatasetRegistryRequest
+      type: object
+    GetDatasetStorageInstructionsResponse:
+      properties:
+        providerKey:
+          type: string
+        storageLocation:
+          type: object
+      title: GetDatasetStorageInstructionsResponse
+      type: object
+    Legal:
+      properties:
+        legaltags:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        otherRelevantDataCountries:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+        status:
+          enum:
+          - compliant
+          - incompliant
+          type: string
+      title: Legal
+      type: object
+    Record:
+      properties:
+        acl:
+          $ref: '#/components/schemas/Acl'
+        ancestry:
+          $ref: '#/components/schemas/RecordAncestry'
+        data:
+          type: object
+        id:
+          description: 'Unique identifier in whole Data Ecosystem. When not provided,
+            Data Ecosystem will create and assign an id to the record. Must follow
+            the naming convention: {Data-Partition-Id}:{object-type}:{uuid}.'
+          example: common:work-product-component--wellLog:123456
+          pattern: ^[\w\-\.]+:[\w-\.]+:[\w\-\.\:\%]+$
+          type: string
+        kind:
+          description: Record kind for which the schema information is applied to.
+          example: common:wks:work-product-component--wellLog:1.0.0
+          type: string
+        legal:
+          $ref: '#/components/schemas/Legal'
+        meta:
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        tags:
+          additionalProperties:
+            type: string
+          type: object
+        version:
+          format: int64
+          type: integer
+      required:
+      - acl
+      - id
+      - kind
+      title: Record
+      type: object
+    RecordAncestry:
+      properties:
+        parents:
+          items:
+            type: string
+          type: array
+          uniqueItems: true
+      title: RecordAncestry
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      title: VersionInfo
+      type: object
+  securitySchemes:
+    Authorization:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+openapi: 3.0.3
+paths:
+  /api/dataset/v1/getDatasetRegistry:
+    get:
+      operationId: getDatasetRegistryUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: query
+        name: id
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getDatasetRegistry
+      tags:
+      - dataset-registry-api
+    post:
+      operationId: getDatasetRegistryUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getDatasetRegistry
+      tags:
+      - dataset-registry-api
+  /api/dataset/v1/getRetrievalInstructions:
+    get:
+      operationId: getRetrievalInstructionsUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: query
+        name: id
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRetrievalInstructions
+      tags:
+      - dataset-dms-api
+    post:
+      operationId: getRetrievalInstructionsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getRetrievalInstructions
+      tags:
+      - dataset-dms-api
+  /api/dataset/v1/getStorageInstructions:
+    get:
+      operationId: getStorageInstructionsUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: kindSubType
+        in: query
+        name: kindSubType
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetDatasetStorageInstructionsResponse'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getStorageInstructions
+      tags:
+      - dataset-dms-api
+  /api/dataset/v1/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/dataset/v1/registerDataset:
+    put:
+      operationId: createOrUpdateDatasetRegistryUsingPUT
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDatasetRegistryRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCreateUpdateDatasetRegistryResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: createOrUpdateDatasetRegistry
+      tags:
+      - dataset-registry-api
+  /api/dataset/v1/retrievalInstructions:
+    get:
+      operationId: retrievalInstructionsUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: id
+        in: query
+        name: id
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: retrievalInstructions
+      tags:
+      - dataset-dms-api
+    post:
+      operationId: retrievalInstructionsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetDatasetRegistryRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: retrievalInstructions
+      tags:
+      - dataset-dms-api
+  /api/dataset/v1/storageInstructions:
+    post:
+      operationId: storageInstructionsUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: reference
+        in: header
+        name: frame-of-reference
+        required: true
+      - description: kindSubType
+        in: query
+        name: kindSubType
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetDatasetStorageInstructionsResponse'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: storageInstructions
+      tags:
+      - dataset-dms-api
+servers:
+- description: Inferred Url
+  url: https://uptesting0.oep.ppe.azure-int.net
+tags:
+- description: Dataset Dms Api
+  name: dataset-dms-api
+- description: Dataset Registry Api
+  name: dataset-registry-api
+- description: Info Api
+  name: info-api
