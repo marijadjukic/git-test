@@ -1,0 +1,414 @@
+components:
+  schemas:
+    ConnectedOuterService:
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+      title: ConnectedOuterService
+      type: object
+    SchemaIdentity:
+      properties:
+        authority:
+          pattern: ^[\w\-\.]+$
+          type: string
+        entityType:
+          pattern: ^[\w\-\.]+$
+          type: string
+        id:
+          type: string
+        schemaVersionMajor:
+          format: int64
+          type: integer
+        schemaVersionMinor:
+          format: int64
+          type: integer
+        schemaVersionPatch:
+          format: int64
+          type: integer
+        source:
+          pattern: ^[\w\-\.]+$
+          type: string
+      required:
+      - authority
+      - entityType
+      - schemaVersionMajor
+      - schemaVersionMinor
+      - schemaVersionPatch
+      - source
+      title: SchemaIdentity
+      type: object
+    SchemaInfo:
+      properties:
+        createdBy:
+          type: string
+        dateCreated:
+          format: date-time
+          type: string
+        schemaIdentity:
+          $ref: '#/components/schemas/SchemaIdentity'
+        scope:
+          enum:
+          - INTERNAL
+          - SHARED
+          type: string
+        status:
+          enum:
+          - DEVELOPMENT
+          - OBSOLETE
+          - PUBLISHED
+          type: string
+        supersededBy:
+          $ref: '#/components/schemas/SchemaIdentity'
+      required:
+      - schemaIdentity
+      - status
+      title: SchemaInfo
+      type: object
+    SchemaInfoResponse:
+      properties:
+        count:
+          format: int32
+          type: integer
+        offset:
+          format: int32
+          type: integer
+        schemaInfos:
+          items:
+            $ref: '#/components/schemas/SchemaInfo'
+          type: array
+        totalCount:
+          format: int32
+          type: integer
+      title: SchemaInfoResponse
+      type: object
+    SchemaRequest:
+      properties:
+        schema:
+          type: object
+        schemaInfo:
+          $ref: '#/components/schemas/SchemaInfo'
+      required:
+      - schema
+      - schemaInfo
+      title: SchemaRequest
+      type: object
+    VersionInfo:
+      properties:
+        artifactId:
+          type: string
+        branch:
+          type: string
+        buildTime:
+          type: string
+        commitId:
+          type: string
+        commitMessage:
+          type: string
+        connectedOuterServices:
+          items:
+            $ref: '#/components/schemas/ConnectedOuterService'
+          type: array
+        groupId:
+          type: string
+        version:
+          type: string
+      title: VersionInfo
+      type: object
+  securitySchemes:
+    Authorization:
+      in: header
+      name: Authorization
+      type: apiKey
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+openapi: 3.0.3
+paths:
+  /api/schema-service/v1/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionInfo'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/schema-service/v1/schema:
+    get:
+      operationId: getSchemaInfoListUsingGET
+      parameters:
+      - description: authority
+        in: query
+        name: authority
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: source
+        in: query
+        name: source
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: entityType
+        in: query
+        name: entityType
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: schemaVersionMajor
+        in: query
+        name: schemaVersionMajor
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - description: schemaVersionMinor
+        in: query
+        name: schemaVersionMinor
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - description: schemaVersionPatch
+        in: query
+        name: schemaVersionPatch
+        required: false
+        schema:
+          format: int64
+          type: integer
+        style: form
+      - description: status
+        in: query
+        name: status
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: scope
+        in: query
+        name: scope
+        required: false
+        schema:
+          type: string
+        style: form
+      - description: latestVersion
+        in: query
+        name: latestVersion
+        required: false
+        schema:
+          type: boolean
+        style: form
+      - description: limit
+        in: query
+        name: limit
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      - description: offset
+        in: query
+        name: offset
+        required: false
+        schema:
+          format: int32
+          type: integer
+        style: form
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfoResponse'
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getSchemaInfoList
+      tags:
+      - schema-controller
+    post:
+      operationId: createSchemaUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: createSchema
+      tags:
+      - schema-controller
+    put:
+      operationId: upsertSchemaUsingPUT
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: upsertSchema
+      tags:
+      - schema-controller
+  /api/schema-service/v1/schema/{id}:
+    get:
+      operationId: getSchemaUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                type: object
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: getSchema
+      tags:
+      - schema-controller
+  /api/schema-service/v1/schemas/system:
+    put:
+      operationId: upsertSystemSchemaUsingPUT
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaRequest'
+      responses:
+        '200':
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SchemaInfo'
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: upsertSystemSchema
+      tags:
+      - system-schema-controller
+servers:
+- description: Inferred Url
+  url: https://uptesting0.oep.ppe.azure-int.net
+tags:
+- description: Info Api
+  name: info-api
+- description: Schema Controller
+  name: schema-controller
+- description: System Schema Controller
+  name: system-schema-controller
