@@ -1,0 +1,502 @@
+definitions:
+  AddMemberDto:
+    title: AddMemberDto
+    type: object
+  CreateGroupDto:
+    title: CreateGroupDto
+    type: object
+  GroupDto:
+    title: GroupDto
+    type: object
+  ListGroupResponseDto:
+    title: ListGroupResponseDto
+    type: object
+  ListMemberResponseDto:
+    title: ListMemberResponseDto
+    type: object
+  UpdateGroupOperation:
+    title: UpdateGroupOperation
+    type: object
+  UpdateGroupResponseDto:
+    title: UpdateGroupResponseDto
+    type: object
+  VersionInfo:
+    title: VersionInfo
+    type: object
+host: uptesting0.oep.ppe.azure-int.net
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+paths:
+  /api/entitlements/v2/_ah/liveness_check:
+    get:
+      operationId: livenessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: livenessCheck
+      tags:
+      - health-checks-api
+  /api/entitlements/v2/_ah/readiness_check:
+    get:
+      operationId: readinessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: readinessCheck
+      tags:
+      - health-checks-api
+  /api/entitlements/v2/groups:
+    get:
+      operationId: listGroupsUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListGroupResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: listGroups
+      tags:
+      - list-group-api
+    post:
+      consumes:
+      - application/json
+      operationId: createGroupUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: groupInfoDto
+        in: body
+        name: groupInfoDto
+        required: true
+        schema:
+          $ref: '#/definitions/CreateGroupDto'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GroupDto'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: createGroup
+      tags:
+      - create-group-api
+  /api/entitlements/v2/groups/{group_email}:
+    delete:
+      operationId: deleteGroupUsingDELETE
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: group_email
+        in: path
+        name: group_email
+        required: true
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: deleteGroup
+      tags:
+      - delete-group-api
+    patch:
+      consumes:
+      - application/json
+      operationId: updateGroupUsingPATCH
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: group_email
+        in: path
+        name: group_email
+        required: true
+        type: string
+      - description: updateGroupRequest
+        in: body
+        name: updateGroupRequest
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/UpdateGroupOperation'
+          type: array
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UpdateGroupResponseDto'
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: updateGroup
+      tags:
+      - update-group-api
+  /api/entitlements/v2/groups/{group_email}/members:
+    get:
+      operationId: listGroupMembersUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: group_email
+        in: path
+        name: group_email
+        required: true
+        type: string
+      - description: includeType
+        in: query
+        name: includeType
+        required: false
+        type: boolean
+      - description: role
+        enum:
+        - MEMBER
+        - OWNER
+        in: query
+        name: role
+        required: false
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListMemberResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: listGroupMembers
+      tags:
+      - list-member-api
+    post:
+      consumes:
+      - application/json
+      operationId: addMemberUsingPOST
+      parameters:
+      - description: addMemberDto
+        in: body
+        name: addMemberDto
+        required: true
+        schema:
+          $ref: '#/definitions/AddMemberDto'
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: group_email
+        in: path
+        name: group_email
+        required: true
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AddMemberDto'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: addMember
+      tags:
+      - add-member-api
+  /api/entitlements/v2/groups/{group_email}/members/{member_email}:
+    delete:
+      operationId: deleteMemberUsingDELETE_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: group_email
+        in: path
+        name: group_email
+        required: true
+        type: string
+      - description: member_email
+        in: path
+        name: member_email
+        required: true
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: deleteMember
+      tags:
+      - remove-member-api
+  /api/entitlements/v2/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: info
+      tags:
+      - info-api
+  /api/entitlements/v2/members/{member_email}:
+    delete:
+      operationId: deleteMemberUsingDELETE
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: member_email
+        in: path
+        name: member_email
+        required: true
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+      - Authorization:
+        - global
+      summary: deleteMember
+      tags:
+      - delete-member-api
+  /api/entitlements/v2/members/{member_email}/groups:
+    get:
+      operationId: listGroupsOnBehalfOfUsingGET
+      parameters:
+      - description: appid
+        in: query
+        name: appid
+        required: false
+        type: string
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: member_email
+        in: path
+        name: member_email
+        required: true
+        type: string
+      - description: type
+        in: query
+        name: type
+        required: false
+        type: string
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListGroupResponseDto'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: listGroupsOnBehalfOf
+      tags:
+      - list-group-on-behalf-of-api
+  /api/entitlements/v2/tenant-provisioning:
+    post:
+      consumes:
+      - application/json
+      operationId: initiateTenantUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Authorization:
+        - global
+      summary: initiateTenant
+      tags:
+      - init-api
+securityDefinitions:
+  Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: '2.0'
+tags:
+- description: Add Member Api
+  name: add-member-api
+- description: Create Group Api
+  name: create-group-api
+- description: Delete Group Api
+  name: delete-group-api
+- description: Delete Member Api
+  name: delete-member-api
+- description: Health Checks Api
+  name: health-checks-api
+- description: Info Api
+  name: info-api
+- description: Init Api
+  name: init-api
+- description: List Group Api
+  name: list-group-api
+- description: List Group On Behalf Of Api
+  name: list-group-on-behalf-of-api
+- description: List Member Api
+  name: list-member-api
+- description: Remove Member Api
+  name: remove-member-api
+- description: Update Group Api
+  name: update-group-api
