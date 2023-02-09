@@ -1,0 +1,1311 @@
+definitions:
+  ConnectedOuterService:
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+    title: ConnectedOuterService
+    type: object
+  ConvertGeoJsonRequest:
+    description: Request to convert a GeoJSON FeatureCollection or AnyCrsFeatureCollection
+      from WGS 84 or 'AnyCrsFeatureCollection.persistableReferenceCrs to a target
+      CRS.' to a target CRS
+    properties:
+      featureCollection:
+        $ref: '#/definitions/GeoJsonFeatureCollectionReq'
+        description: The GeoJSON FeatureCollection or AnyCrsFeatureCollection structure
+          to be converted/transformed. GeoJSON is always based on WGS 84; AnyCrsFeatureCollection
+          carries the CRS context in the persistableReferenceCrs property. GeoJSON
+          WGS 84 or the persistableReferenceCrs are taken as the 'fromCRS'.
+      toCRS:
+        description: Target CRS as persistable reference string
+        example: '{"authCode":{"auth":"EPSG","code":"4326"},"name":"GCS_WGS_1984","type":"LBC","ver":"PE_10_3_1","wkt":"GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433],AUTHORITY[\"EPSG\",4326]]"}'
+        type: object
+      toUnitZ:
+        description: 'Optional: the target Z-unit for the z-axis scaling.'
+        example: '{"baseMeasurement":{"ancestry":"Length","type":"UM"},"scaleOffset":{"offset":0.0,"scale":1.0},"symbol":"m","type":"USO"}'
+        type: object
+    required:
+    - featureCollection
+    - toCRS
+    - toUnitZ
+    title: ConvertGeoJsonRequest
+    type: object
+  ConvertGeoJsonResponse:
+    description: Response of a CRS conversion/transformation operation involving GeoJSON
+      FeatureCollection or AnyCrsFeatureCollection.
+    properties:
+      featureCollection:
+        $ref: '#/definitions/GeoJsonFeatureCollectionRes'
+        description: The converted GeoJSON FeatureCollection or AnyCrsFeatureCollection
+          with 'toCRS' context; length and order of the structure is the same as in
+          the request. Points, which failed to convert, are returned as NaN.
+      operationsApplied:
+        description: The list of operations performed on the points as a list of strings
+        items:
+          type: string
+        type: array
+      successCount:
+        description: The number of coordinates in the GeoJSON FeatureCollection or
+          AnyCrsFeatureCollection successfully converted/transformed. If this number
+          is less than totalCount then conversion/transformation errors have occurred.
+        type: object
+      totalCount:
+        description: The total number of coordinates in the GeoJSON FeatureCollection
+          or AnyCrsFeatureCollection.
+        type: object
+    title: ConvertGeoJsonResponse
+    type: object
+  ConvertPointsRequest:
+    description: Request to convert a set of points from a source CRS to a target
+      CRS
+    properties:
+      fromCRS:
+        description: Source CRS as persistable reference string
+        example: '{"lateBoundCRS":{"wkt":"GEOGCS[\"GCS_Provisional_S_American_1956\",DATUM[\"D_Provisional_S_American_1956\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433],AUTHORITY[\"EPSG\",4248]]","ver":"PE_10_3_1","name":"GCS_Provisional_S_American_1956","authCode":{"auth":"EPSG","code":"4248"},"type":"LBC"},"singleCT":{"wkt":"GEOGTRAN[\"PSAD_1956_To_WGS_1984_9\",GEOGCS[\"GCS_Provisional_S_American_1956\",DATUM[\"D_Provisional_S_American_1956\",SPHEROID[\"International_1924\",6378388.0,297.0]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"Geocentric_Translation\"],PARAMETER[\"X_Axis_Translation\",-295.0],PARAMETER[\"Y_Axis_Translation\",173.0],PARAMETER[\"Z_Axis_Translation\",-371.0],AUTHORITY[\"EPSG\",1209]]","ver":"PE_10_3_1","name":"PSAD_1956_To_WGS_1984_9","authCode":{"auth":"EPSG","code":"1209"},"type":"ST"},"ver":"PE_10_3_1","name":"PSAD56
+          * DMA-Ven [4248,1209]","authCode":{"auth":"SLB","code":"4248009"},"type":"EBC"}'
+        type: object
+      points:
+        description: List of points to be converted
+        example:
+        - x: -61.04340628871454
+          y: 10.673103179456877
+          z: 0
+        items:
+          $ref: '#/definitions/Point'
+        type: array
+      toCRS:
+        description: Target CRS as persistable reference string
+        example: '{"lateBoundCRS":{"wkt":"PROJCS[\"Trinidad_1903_Trinidad_Grid\",GEOGCS[\"GCS_Trinidad_1903\",DATUM[\"D_Trinidad_1903\",SPHEROID[\"Clarke_1858\",6378293.64520876,294.260676369]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Cassini\"],PARAMETER[\"False_Easting\",430000.0],PARAMETER[\"False_Northing\",325000.0],PARAMETER[\"Central_Meridian\",-61.3333333333333],PARAMETER[\"Scale_Factor\",1.0],PARAMETER[\"Latitude_Of_Origin\",10.4416666666667],UNIT[\"Link_Clarke\",0.201166195164],AUTHORITY[\"EPSG\",30200]]","ver":"PE_10_3_1","name":"Trinidad_1903_Trinidad_Grid","authCode":{"auth":"EPSG","code":"30200"},"type":"LBC"},"singleCT":{"wkt":"GEOGTRAN[\"Trinidad_1903_To_WGS_1984_2\",GEOGCS[\"GCS_Trinidad_1903\",DATUM[\"D_Trinidad_1903\",SPHEROID[\"Clarke_1858\",6378293.64520876,294.260676369]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],METHOD[\"Geocentric_Translation\"],PARAMETER[\"X_Axis_Translation\",-61.0],PARAMETER[\"Y_Axis_Translation\",285.2],PARAMETER[\"Z_Axis_Translation\",471.6],AUTHORITY[\"EPSG\",10085]]","ver":"PE_10_3_1","name":"Trinidad_1903_To_WGS_1984_2","authCode":{"auth":"EPSG","code":"10085"},"type":"ST"},"ver":"PE_10_3_1","name":"Trinidad
+          1903 * EOG-Tto Trin / Trinidad Grid [30200,10085]","authCode":{"auth":"SLB","code":"30200002"},"type":"EBC"}'
+        type: object
+    required:
+    - fromCRS
+    - points
+    - toCRS
+    title: ConvertPointsRequest
+    type: object
+  ConvertPointsResponse:
+    description: Response of a CRS conversion/transformation operation
+    properties:
+      operationsApplied:
+        description: The list of operations performed on the points as a list of strings
+        items:
+          type: string
+        type: array
+      points:
+        description: Converted points; length and order of the array is the same as
+          in the request. Points, which failed to convert, are returned as NaN.
+        items:
+          $ref: '#/definitions/Point'
+        type: array
+      successCount:
+        description: Number of points successfully converted. If the number is less
+          than the request array length conversion/transformation failures occurred.
+        type: object
+    title: ConvertPointsResponse
+    type: object
+  ConvertTrajectoryRequest:
+    description: Input trajectory data structure; contains the context (crs, units,
+      azimuth reference, method)
+    properties:
+      azimuthReference:
+        description: azimuth reference for the input trajectory station azimuth values
+          (TRUE_NORTH or GridNorth)
+        example: TRUE_NORTH
+        type: object
+      inputKind:
+        description: The kind of input; one of MD_Inclination_Azimuth (default), MD_X_Y_Z,
+          MD_dX_dY_dZ, X_Y_Z, dX_dY_dZ. MD stands for measured depth; MD_X_Y_Z/X_Y_Z
+          stand for absolute coordinates in the reference CRS, MD_dX_dY_dZ/dX_dY_dZ
+          stand for deviations relative to the reference point.
+        example: MD_Inclination_Azimuth
+        type: object
+      inputStations:
+        description: The array of input trajectory stations
+        example:
+        - azimuth: 0
+          inclination: 0
+          md: 0
+        - azimuth: 0
+          inclination: 0
+          md: 1000
+        - azimuth: 0
+          inclination: 90
+          md: 2000
+        - azimuth: 0
+          inclination: 90
+          md: 3000
+        - azimuth: 90
+          inclination: 90
+          md: 5000
+        - azimuth: 90
+          inclination: 90
+          md: 6000
+        items:
+          $ref: '#/definitions/TrajectoryStationIn'
+        type: array
+      interpolate:
+        description: Perform trajectory interpolation on demand; default is true.
+        example: 'True'
+        type: object
+      method:
+        description: The computation method - 'AzimuthalEquidistant' (default) or
+          'LMP' (Lee's modified proposal SPE96813)
+        example: AzimuthalEquidistant
+        type: object
+      referencePoint:
+        $ref: '#/definitions/Point'
+        description: The 3D reference point in the 'trajectoryCRS' where MD==0.
+      trajectoryCRS:
+        description: Coordinate reference system for the reference point; typically
+          the CRS is a projected CRS; if a geographic CRS is provided, the unitXY
+          must be defined and the azimuthReference must be TRUE_NORTH.
+        example: '{"wkt":"PROJCS[\"WGS_1984_UTM_Zone_31N\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"False_Easting\",500000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",3.0],PARAMETER[\"Scale_Factor\",0.9996],PARAMETER[\"Latitude_Of_Origin\",0.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",32631]]","ver":"PE_10_3_1","name":"WGS_1984_UTM_Zone_31N","authCode":{"auth":"EPSG","code":"32631"},"type":"LBC"}'
+        type: object
+      unitXY:
+        description: The horizontal unit of the dx, dy in the input trajectory stations;
+          the unit must be a length unit in 'persistable model' format, see example.
+        example: '{"scaleOffset":{"scale":1.0,"offset":0.0},"symbol":"m","baseMeasurement":{"ancestry":"Length","type":"UM"},"type":"USO"}'
+        type: object
+      unitZ:
+        description: The vertical unit of the dz in the input trajectory stations;
+          the unit must be a length unit in 'persistable model' format, see example.
+        example: '{"scaleOffset":{"scale":1.0,"offset":0.0},"symbol":"m","baseMeasurement":{"ancestry":"Length","type":"UM"},"type":"USO"}'
+        type: object
+    required:
+    - azimuthReference
+    - inputStations
+    - method
+    - referencePoint
+    - trajectoryCRS
+    - unitZ
+    title: ConvertTrajectoryRequest
+    type: object
+  ConvertTrajectoryResponse:
+    description: Trajectory response data structure; contains the context (crs, units).
+    properties:
+      inputKind:
+        description: The kind of input; one of MD_Inclination_Azimuth (default), MD_X_Y_Z,
+          MD_dX_dY_dZ, X_Y_Z, dX_dY_dZ. MD stands for measured depth; MD_X_Y_Z/X_Y_Z
+          stand for absolute coordinates in the reference CRS, MD_dX_dY_dZ/dX_dY_dZ
+          stand for deviations relative to the reference point.
+        example: MD_Inclination_Azimuth
+        type: object
+      localCRS:
+        description: Coordinate Reference System for the local, True North oriented,
+          true distance, engineering CRS with origin at the well's surface location.
+        example:
+          authCode:
+            auth: SLB
+            code: '30200002'
+          lateBoundCRS:
+            authCode:
+              auth: EPSG
+              code: '30200'
+            name: Trinidad_1903_Trinidad_Grid
+            type: LBC
+            ver: PE_10_3_1
+            wkt: PROJCS["Trinidad_1903_Trinidad_Grid",GEOGCS["GCS_Trinidad_1903",DATUM["D_Trinidad_1903",SPHEROID["Clarke_1858",6378293.64520876,294.260676369]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Cassini"],PARAMETER["False_Easting",430000.0],PARAMETER["False_Northing",325000.0],PARAMETER["Central_Meridian",-61.3333333333333],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",10.4416666666667],UNIT["Link_Clarke",0.201166195164],AUTHORITY["EPSG",30200]]
+          name: Trinidad 1903 * EOG-Tto Trin / Trinidad Grid [30200,10085]
+          singleCT:
+            authCode:
+              auth: EPSG
+              code: '10085'
+            name: Trinidad_1903_To_WGS_1984_2
+            type: ST
+            ver: PE_10_3_1
+            wkt: GEOGTRAN["Trinidad_1903_To_WGS_1984_2",GEOGCS["GCS_Trinidad_1903",DATUM["D_Trinidad_1903",SPHEROID["Clarke_1858",6378293.64520876,294.260676369]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Geocentric_Translation"],PARAMETER["X_Axis_Translation",-61.0],PARAMETER["Y_Axis_Translation",285.2],PARAMETER["Z_Axis_Translation",471.6],AUTHORITY["EPSG",10085]]
+          type: EBC
+          ver: PE_10_3_1
+        type: object
+      method:
+        description: The computation method used - 'AzimuthalEquidistant' (default)
+          or 'LMP' (Lee's modified proposal SPE96813).
+        example: AzimuthalEquidistant
+        type: object
+      operationsApplied:
+        description: The list of operations performed on the points as a list of strings
+        items:
+          type: string
+        type: array
+      stations:
+        description: Computed trajectory stations.
+        items:
+          $ref: '#/definitions/TrajectoryStationOut'
+        type: array
+      trajectoryCRS:
+        description: Coordinate reference system for the reference point; typically
+          the CRS is a projected CRS; if a geographic CRS is provided, the unitXY
+          must be defined and the azimuthReference must be TRUE_NORTH.
+        example:
+          authCode:
+            auth: SLB
+            code: '30200002'
+          lateBoundCRS:
+            authCode:
+              auth: EPSG
+              code: '30200'
+            name: Trinidad_1903_Trinidad_Grid
+            type: LBC
+            ver: PE_10_3_1
+            wkt: PROJCS["Trinidad_1903_Trinidad_Grid",GEOGCS["GCS_Trinidad_1903",DATUM["D_Trinidad_1903",SPHEROID["Clarke_1858",6378293.64520876,294.260676369]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Cassini"],PARAMETER["False_Easting",430000.0],PARAMETER["False_Northing",325000.0],PARAMETER["Central_Meridian",-61.3333333333333],PARAMETER["Scale_Factor",1.0],PARAMETER["Latitude_Of_Origin",10.4416666666667],UNIT["Link_Clarke",0.201166195164],AUTHORITY["EPSG",30200]]
+          name: Trinidad 1903 * EOG-Tto Trin / Trinidad Grid [30200,10085]
+          singleCT:
+            authCode:
+              auth: EPSG
+              code: '10085'
+            name: Trinidad_1903_To_WGS_1984_2
+            type: ST
+            ver: PE_10_3_1
+            wkt: GEOGTRAN["Trinidad_1903_To_WGS_1984_2",GEOGCS["GCS_Trinidad_1903",DATUM["D_Trinidad_1903",SPHEROID["Clarke_1858",6378293.64520876,294.260676369]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],METHOD["Geocentric_Translation"],PARAMETER["X_Axis_Translation",-61.0],PARAMETER["Y_Axis_Translation",285.2],PARAMETER["Z_Axis_Translation",471.6],AUTHORITY["EPSG",10085]]
+          type: EBC
+          ver: PE_10_3_1
+        type: object
+      unitDls:
+        description: The unit of the dog leg severity (DLS) in the output trajectory
+          stations.
+        example: '%7B%22ScaleOffset%22%3A%7B%22Scale%22%3A5.72614583987641E-4%2C%22Offset%22%3A0.0%7D%2C%22Symbol%22%3A%22deg%2F100ft%22%2C%22BaseMeasurement%22%3A%22%257B%2522Ancestry%2522%253A%2522Rotation_Per_Length%2522%257D%22%7D'
+        type: object
+      unitXY:
+        description: The horizontal unit of the dx, dy in the output trajectory stations.
+        example:
+          baseMeasurement:
+            ancestry: Length
+            type: UM
+          scaleOffset:
+            offset: 0.0
+            scale: 1.0
+          symbol: m
+          type: USO
+        type: object
+      unitZ:
+        description: The vertical unit of the dz in the output trajectory stations.
+        example:
+          baseMeasurement:
+            ancestry: Length
+            type: UM
+          scaleOffset:
+            offset: 0.0
+            scale: 1.0
+          symbol: m
+          type: USO
+        type: object
+    required:
+    - localCRS
+    - method
+    - stations
+    - trajectoryCRS
+    - unitDls
+    - unitZ
+    title: ConvertTrajectoryResponse
+    type: object
+  ErrorResponse:
+    description: Response resulting of a failed CRS conversion operation
+    properties:
+      error:
+        description: Error message
+        type: object
+    title: ErrorResponse
+    type: object
+  GeoJsonBaseReq:
+    properties:
+      bbox:
+        items:
+          format: double
+          type: number
+        type: array
+      geoJsonVariantInternal:
+        enum:
+        - ANY_CRS_GEO_JSON
+        - GEO_JSON
+        type: string
+      type:
+        type: string
+    title: GeoJsonBaseReq
+    type: object
+  GeoJsonBaseRes:
+    properties:
+      bbox:
+        items:
+          format: double
+          type: number
+        type: array
+      type:
+        type: string
+    title: GeoJsonBaseRes
+    type: object
+  GeoJsonFeatureCollectionReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        CoordinateReferenceSystemID:
+          type: string
+        VerticalUnitID:
+          type: string
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        features:
+          items:
+            $ref: '#/definitions/GeoJsonFeatureReq'
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        persistableReferenceCrs:
+          type: string
+        persistableReferenceUnitZ:
+          type: string
+        properties:
+          type: object
+        type:
+          type: string
+      title: GeoJsonFeatureCollectionReq
+      type: object
+    title: GeoJsonFeatureCollection
+  GeoJsonFeatureCollectionRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        CoordinateReferenceSystemID:
+          type: string
+        VerticalUnitID:
+          type: string
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        features:
+          items:
+            $ref: '#/definitions/GeoJsonFeatureRes'
+          type: array
+        persistableReferenceCrs:
+          type: string
+        persistableReferenceUnitZ:
+          type: string
+        properties:
+          type: object
+        type:
+          type: string
+      title: GeoJsonFeatureCollectionRes
+      type: object
+    title: GeoJsonFeatureCollection
+  GeoJsonFeatureReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        geometry:
+          $ref: '#/definitions/GeoJsonBaseReq'
+        properties:
+          type: object
+        type:
+          type: string
+      title: GeoJsonFeatureReq
+      type: object
+    title: GeoJsonFeature
+  GeoJsonFeatureRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geometry:
+          $ref: '#/definitions/GeoJsonBaseRes'
+        properties:
+          type: object
+        type:
+          type: string
+      title: GeoJsonFeatureRes
+      type: object
+    title: GeoJsonFeature
+  GeoJsonGeometryCollectionReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        geometries:
+          items:
+            $ref: '#/definitions/GeoJsonBaseReq'
+          type: array
+        type:
+          type: string
+      title: GeoJsonGeometryCollectionReq
+      type: object
+    title: GeoJsonGeometryCollection
+  GeoJsonGeometryCollectionRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        geometries:
+          items:
+            $ref: '#/definitions/GeoJsonBaseRes'
+          type: array
+        type:
+          type: string
+      title: GeoJsonGeometryCollectionRes
+      type: object
+    title: GeoJsonGeometryCollection
+  GeoJsonLineStringReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              format: double
+              type: number
+            type: array
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonLineStringReq
+      type: object
+    title: GeoJsonLineString
+  GeoJsonLineStringRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              format: double
+              type: number
+            type: array
+          type: array
+        type:
+          type: string
+      title: GeoJsonLineStringRes
+      type: object
+    title: GeoJsonLineString
+  GeoJsonMultiLineStringReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonMultiLineStringReq
+      type: object
+    title: GeoJsonMultiLineString
+  GeoJsonMultiLineStringRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+          type: array
+        type:
+          type: string
+      title: GeoJsonMultiLineStringRes
+      type: object
+    title: GeoJsonMultiLineString
+  GeoJsonMultiPointReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              format: double
+              type: number
+            type: array
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonMultiPointReq
+      type: object
+    title: GeoJsonMultiPoint
+  GeoJsonMultiPointRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              format: double
+              type: number
+            type: array
+          type: array
+        type:
+          type: string
+      title: GeoJsonMultiPointRes
+      type: object
+    title: GeoJsonMultiPoint
+  GeoJsonMultiPolygonReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                items:
+                  format: double
+                  type: number
+                type: array
+              type: array
+            type: array
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonMultiPolygonReq
+      type: object
+    title: GeoJsonMultiPolygon
+  GeoJsonMultiPolygonRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                items:
+                  format: double
+                  type: number
+                type: array
+              type: array
+            type: array
+          type: array
+        type:
+          type: string
+      title: GeoJsonMultiPolygonRes
+      type: object
+    title: GeoJsonMultiPolygon
+  GeoJsonPointReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            format: double
+            type: number
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonPointReq
+      type: object
+    title: GeoJsonPoint
+  GeoJsonPointRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            format: double
+            type: number
+          type: array
+        type:
+          type: string
+      title: GeoJsonPointRes
+      type: object
+    title: GeoJsonPoint
+  GeoJsonPolygonReq:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseReq'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+          type: array
+        geoJsonVariantInternal:
+          enum:
+          - ANY_CRS_GEO_JSON
+          - GEO_JSON
+          type: string
+        type:
+          type: string
+      title: GeoJsonPolygonReq
+      type: object
+    title: GeoJsonPolygon
+  GeoJsonPolygonRes:
+    allOf:
+    - $ref: '#/definitions/GeoJsonBaseRes'
+    - properties:
+        bbox:
+          items:
+            format: double
+            type: number
+          type: array
+        coordinates:
+          items:
+            items:
+              items:
+                format: double
+                type: number
+              type: array
+            type: array
+          type: array
+        type:
+          type: string
+      title: GeoJsonPolygonRes
+      type: object
+    title: GeoJsonPolygon
+  Point:
+    description: Point representation for CRS operations
+    properties:
+      x:
+        description: x coordinate or longitude
+        example: -61.04340628871454
+        type: object
+      y:
+        description: y coordinate or latitude
+        example: 10.673103179456877
+        type: object
+      z:
+        description: z coordinate
+        example: 0.0
+        type: object
+    required:
+    - x
+    - y
+    - z
+    title: Point
+    type: object
+  TrajectoryStationIn:
+    description: Input trajectory station record; context is provided by the container.
+    properties:
+      azimuth:
+        description: Azimuth angle in degrees of arc, 0.0/360.0 is North; reference
+          given by azimuthReference (TRUE_NORTH or GridNorth).
+        example: 355.0
+        type: object
+      dx:
+        description: E-W deviation in the local Cartesian engineering CRS from the
+          well reference point; unit is given by container's 'unitXY' or projected
+          'trajectoryCRS'.
+        example: 55.9
+        type: object
+      dy:
+        description: N-S deviation in the local Cartesian engineering CRS from the
+          well reference point; Y is aligned with azimuth reference (TRUE_NORTH or
+          projected GridNorth); unit is given by container's 'unitXY' or projected
+          'trajectoryCRS'.
+        example: -145.3
+        type: object
+      dz:
+        description: True vertical deviation in the local Cartesian engineering CRS
+          from the well reference point; unit is given by container's unitZ; downwards
+          positive.
+        example: 1965.6
+        type: object
+      inclination:
+        description: Inclination angle in degrees of arc, 0.0 is vertical, 90.0 is
+          horizontal.
+        example: 15.0
+        type: object
+      md:
+        description: MD (measured depth) from vertical reference point in 'unitZ'.
+        example: 2563.56
+        type: object
+    required:
+    - azimuth
+    - inclination
+    - md
+    title: TrajectoryStationIn
+    type: object
+  TrajectoryStationOut:
+    description: Output trajectory station record; context is provided by the container.
+    properties:
+      azimuthGN:
+        description: Grid North azimuth angle in degrees of arc, 0.0/360.0 is North.
+        example: 355.0
+        type: object
+      azimuthTN:
+        description: True North azimuth angle in degrees of arc, 0.0/360.0 is North.
+        example: 355.96
+        type: object
+      dls:
+        description: Curvature, Dog Leg Severity, measured in 'unitDls'.
+        type: object
+      dxTN:
+        description: True E-W deviation in the local Cartesian engineering CRS from
+          the well reference point; unit is given by container's 'unitXY'.
+        example: 55.9
+        type: object
+      dyTN:
+        description: True N-S deviation in the local Cartesian engineering CRS from
+          the well reference point; Y is aligned with TRUE_NORTH; unit is given by
+          container's 'unitXY'.
+        example: -145.3
+        type: object
+      dz:
+        format: double
+        type: number
+      inclination:
+        description: Inclination angle in degrees of arc, 0.0 is vertical, 90.0 is
+          horizontal.
+        example: 15.0
+        type: object
+      md:
+        description: MD (measured depth) from vertical reference point in 'unitZ'.
+        example: 2563.56
+        type: object
+      original:
+        description: Original trajectory station if true, interpolated trajectory
+          station if false.
+        type: object
+      point:
+        $ref: '#/definitions/Point'
+        description: Trajectory station point in trajectoryCRS and vertical unit as
+          defined in container's 'unitZ'.
+      wgs84Latitude:
+        description: WGS 84 latitude in dega
+        type: object
+      wgs84Longitude:
+        description: WGS 84 longitude in dega
+        type: object
+    required:
+    - azimuthGN
+    - azimuthTN
+    - dxTN
+    - dyTN
+    - inclination
+    - md
+    - point
+    title: TrajectoryStationOut
+    type: object
+  VersionInfo:
+    properties:
+      artifactId:
+        type: string
+      branch:
+        type: string
+      buildTime:
+        type: string
+      commitId:
+        type: string
+      commitMessage:
+        type: string
+      connectedOuterServices:
+        items:
+          $ref: '#/definitions/ConnectedOuterService'
+        type: array
+      groupId:
+        type: string
+      version:
+        type: string
+    title: VersionInfo
+    type: object
+host: uptesting0.oep.ppe.azure-int.net
+info:
+  contact: {}
+  description: Api Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  termsOfService: urn:tos
+  title: Api Documentation
+  version: '1.0'
+paths:
+  /api/crs/converter/_ah/liveness_check:
+    get:
+      operationId: livenessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Bearer Authorization: []
+      summary: livenessCheck
+      tags:
+      - health-check
+  /api/crs/converter/_ah/readiness_check:
+    get:
+      operationId: readinessCheckUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: object
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Bearer Authorization: []
+      summary: readinessCheck
+      tags:
+      - health-check
+  /api/crs/converter/v2/convert:
+    post:
+      consumes:
+      - application/json
+      description: Convert a list of points
+      operationId: convertPointUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertPointsRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertPointsResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert a list of points
+      tags:
+      - CRS Point Conversion
+  /api/crs/converter/v2/convertGeoJson:
+    post:
+      consumes:
+      - application/json
+      description: Convert a GeoJSON or AnyCrsGeoJson structure
+      operationId: convertGeoJsonUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertGeoJsonRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertGeoJsonResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert a GeoJSON or AnyCrsGeoJson structure
+      tags:
+      - CRS Point Conversion
+  /api/crs/converter/v2/convertTrajectory:
+    post:
+      consumes:
+      - application/json
+      description: Convert a list of trajectory stations, given the unit and spatial
+        context and a reference point in 3D where MD==0.
+      operationId: convertTrajectoryUsingPOST
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertTrajectoryRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Trajectory conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertTrajectoryResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert trajectory stations
+      tags:
+      - Trajectory Computation and Conversion
+  /api/crs/converter/v2/info:
+    get:
+      operationId: infoUsingGET
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Bearer Authorization: []
+      summary: info
+      tags:
+      - info-api
+  /api/crs/converter/v3/convert:
+    post:
+      consumes:
+      - application/json
+      description: Convert a list of points
+      operationId: convertPointUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertPointsRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertPointsResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert a list of points
+      tags:
+      - CRS Point Conversion
+  /api/crs/converter/v3/convertGeoJson:
+    post:
+      consumes:
+      - application/json
+      description: Convert a GeoJSON or AnyCrsGeoJson structure
+      operationId: convertGeoJsonUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertGeoJsonRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertGeoJsonResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert a GeoJSON or AnyCrsGeoJson structure
+      tags:
+      - CRS Point Conversion
+  /api/crs/converter/v3/convertTrajectory:
+    post:
+      consumes:
+      - application/json
+      description: Convert a list of trajectory stations, given the unit and spatial
+        context and a reference point in 3D where MD==0.
+      operationId: convertTrajectoryUsingPOST_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      - description: request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/ConvertTrajectoryRequest'
+      produces:
+      - '*/*'
+      responses:
+        '200':
+          description: Trajectory conversion performed successfully
+          schema:
+            $ref: '#/definitions/ConvertTrajectoryResponse'
+        '201':
+          description: Created
+        '400':
+          description: Bad input format
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+        '500':
+          description: Unknown error.
+        '503':
+          description: CRS-converter overloaded; try again later
+      security:
+      - Bearer Authorization: []
+      summary: Convert trajectory stations
+      tags:
+      - Trajectory Computation and Conversion
+  /api/crs/converter/v3/info:
+    get:
+      operationId: infoUsingGET_1
+      parameters:
+      - description: tenant
+        in: header
+        name: data-partition-id
+        required: true
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/VersionInfo'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      security:
+      - Bearer Authorization: []
+      summary: info
+      tags:
+      - info-api
+securityDefinitions:
+  Bearer Authorization:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: '2.0'
+tags:
+- description: Crs Converter Api V 2
+  name: crs-converter-api-v-2
+- description: Crs Converter Api V 3
+  name: crs-converter-api-v-3
+- description: Health Check
+  name: health-check
+- description: Info Api
+  name: info-api
